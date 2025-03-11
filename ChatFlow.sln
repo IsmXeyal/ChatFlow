@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{4CC2C2DD-AA63-4B5B-9824-B416D942E7FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{BCD2ACCB-286D-459A-9B2A-7434A8D49083}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.Domain", "Core\ChatFlow.Domain\ChatFlow.Domain.csproj", "{28442CE7-FA3E-495E-8AF3-7FC865FD75DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.Application", "Core\ChatFlow.Application\ChatFlow.Application.csproj", "{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.Infrastructure", "Infrastructure\ChatFlow.Infrastructure\ChatFlow.Infrastructure.csproj", "{AA481974-F0BE-4956-9351-1B905A511F66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.Persistence", "Infrastructure\ChatFlow.Persistence\ChatFlow.Persistence.csproj", "{1996FA12-67C1-45B3-A135-8504FBA2565E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.WebAPI", "Presentation\ChatFlow.WebAPI\ChatFlow.WebAPI.csproj", "{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28442CE7-FA3E-495E-8AF3-7FC865FD75DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28442CE7-FA3E-495E-8AF3-7FC865FD75DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28442CE7-FA3E-495E-8AF3-7FC865FD75DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28442CE7-FA3E-495E-8AF3-7FC865FD75DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA481974-F0BE-4956-9351-1B905A511F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA481974-F0BE-4956-9351-1B905A511F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA481974-F0BE-4956-9351-1B905A511F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA481974-F0BE-4956-9351-1B905A511F66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1996FA12-67C1-45B3-A135-8504FBA2565E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1996FA12-67C1-45B3-A135-8504FBA2565E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1996FA12-67C1-45B3-A135-8504FBA2565E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1996FA12-67C1-45B3-A135-8504FBA2565E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{28442CE7-FA3E-495E-8AF3-7FC865FD75DE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E00B9D2D-BE4E-4010-9EEA-7ECFE15182A7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{AA481974-F0BE-4956-9351-1B905A511F66} = {4CC2C2DD-AA63-4B5B-9824-B416D942E7FA}
+		{1996FA12-67C1-45B3-A135-8504FBA2565E} = {4CC2C2DD-AA63-4B5B-9824-B416D942E7FA}
+		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E} = {BCD2ACCB-286D-459A-9B2A-7434A8D49083}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C8A4BFE-3F67-491D-A2A9-75D733D751C6}
+	EndGlobalSection
+EndGlobal

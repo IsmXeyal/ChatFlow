@@ -1,0 +1,36 @@
+services:
+  chatflow.webapi:
+    image: chatflowwebapi
+    container_name: chatflow.webapi
+    build:
+      context: .
+      dockerfile: Presentation/ChatFlow.WebAPI/Dockerfile
+    ports:
+      - "5000:5000"
+
+  chatflow.database:
+    image: postgres:latest
+    container_name: chatflow.database
+    environment:
+      POSTGRES_DB: chatflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: khayal
+    volumes:
+      - chatflow-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  chatflow.mvc:
+    image: chatflowmvc
+    container_name: chatflow.mvc
+    build:
+      context: .
+      dockerfile: Presentation/ChatFlow.Mvc/Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - chatflow.webapi
+      - chatflow.database
+
+volumes:
+  chatflow-db-data:

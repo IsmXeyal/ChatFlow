@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99 d17.13
+VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -18,6 +18,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.Persistence", "Infrastructure\ChatFlow.Persistence\ChatFlow.Persistence.csproj", "{1996FA12-67C1-45B3-A135-8504FBA2565E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.WebAPI", "Presentation\ChatFlow.WebAPI\ChatFlow.WebAPI.csproj", "{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatFlow.MVC", "Presentation\ChatFlow.MVC\ChatFlow.MVC.csproj", "{CBA9032B-6C72-4600-B12B-1ED74BB58270}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBA9032B-6C72-4600-B12B-1ED74BB58270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBA9032B-6C72-4600-B12B-1ED74BB58270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBA9032B-6C72-4600-B12B-1ED74BB58270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBA9032B-6C72-4600-B12B-1ED74BB58270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +67,7 @@ Global
 		{AA481974-F0BE-4956-9351-1B905A511F66} = {4CC2C2DD-AA63-4B5B-9824-B416D942E7FA}
 		{1996FA12-67C1-45B3-A135-8504FBA2565E} = {4CC2C2DD-AA63-4B5B-9824-B416D942E7FA}
 		{47B01E6F-CD85-4BFE-AFEE-5F82BD075B3E} = {BCD2ACCB-286D-459A-9B2A-7434A8D49083}
+		{CBA9032B-6C72-4600-B12B-1ED74BB58270} = {BCD2ACCB-286D-459A-9B2A-7434A8D49083}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C8A4BFE-3F67-491D-A2A9-75D733D751C6}

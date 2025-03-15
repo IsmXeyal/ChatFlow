@@ -2,7 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Room Input -->
+            <input class="form-control form-control-lg" type="text" placeholder="Room name" />
+            <button class="btn btn-info mb-3" type="button">Create Room</button>
+            <select size="5" style="width: 100%;" class="form-select" multiple>
+                <option selected value="-1">Rooms</option>
+            </select>
+            <button class="btn btn-primary mb-3" type="button">Join Chosen Room</button>
+            <br><br><br>
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action users active">All</a>
+                <a class="list-group-item list-group-item-action users">Cras justo odio</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Chat Area -->
+            <textarea class="form-control" rows="3" placeholder="Enter the message"></textarea>
+            <button class="btn btn-light mb-3" type="button" id="btnSend">Send</button>
+            <br><br><br>
+
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Xeyal</h5>
+                        <h5 class="mb-2">You</h5>
+                    </div>
+                    <p class="mb-1">Hello</p>
+                    <small>3 days ago</small>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <!-- User Name -->
+            <input class="form-control form-control-lg" type="text" placeholder="Your Name/Khayal" />
+            <button class="btn btn-success mb-3" type="button" id="btnEnter">Enter</button>
+        </div>
+    </div>
 </div>
+

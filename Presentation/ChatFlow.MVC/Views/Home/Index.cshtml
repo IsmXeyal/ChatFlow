@@ -6,42 +6,70 @@
     <div class="row">
         <div class="col-md-3">
             <!-- Room Input -->
-            <input class="form-control form-control-lg" type="text" placeholder="Room name" />
-            <button class="btn btn-info mb-3" type="button">Create Room</button>
-            <select size="5" style="width: 100%;" class="form-select" multiple>
+            <input id="txtRoomName" class="form-control form-control-lg disabled" type="text" placeholder="Room name" />
+            <button id="btnCreate" class="btn btn-info mb-3 disabled" type="button">Create Room</button>
+            <select size="5" style="width: 100%;" class="form-select disabled rooms" multiple>
                 <option selected value="-1">Rooms</option>
             </select>
-            <button class="btn btn-primary mb-3" type="button">Join Chosen Room</button>
+            <button id="btnJoin" class="btn btn-primary mb-3 disabled" type="button">Join Chosen Room</button>
             <br><br><br>
-            <div class="list-group">
+            <div class="list-group clients">
                 <a class="list-group-item list-group-item-action users active">All</a>
-                <a class="list-group-item list-group-item-action users">Cras justo odio</a>
+                <div id="_clients"></div>
             </div>
         </div>
 
         <div class="col-md-6">
+            <div class="alert alert-success" id="clientSituation" style="display: none;"></div>
             <!-- Chat Area -->
-            <textarea class="form-control" rows="3" placeholder="Enter the message"></textarea>
+            <textarea id="txtMessage" class="form-control" rows="3" placeholder="Enter the message"></textarea>
             <button class="btn btn-light mb-3" type="button" id="btnSend">Send</button>
+            <button class="btn btn-light mb-3" type="button" id="btnSendToGroup">Send to the Group</button>
+
             <br><br><br>
 
-            <div class="list-group">
-                <a class="list-group-item list-group-item-action">
+            <div class="list-group messages">
+                <a class="list-group-item list-group-item-action message">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">Xeyal</h5>
-                        <h5 class="mb-2">You</h5>
+                        <h5 class="mb-1"></h5>
+                        <h5 class="mb-2"></h5>
                     </div>
-                    <p class="mb-1">Hello</p>
-                    <small>3 days ago</small>
+                    <p class="mb-1"></p>
+                    <small class="message-date"></small>
                 </a>
             </div>
         </div>
 
         <div class="col-md-3">
             <!-- User Name -->
-            <input class="form-control form-control-lg" type="text" placeholder="Your Name/Khayal" />
+            <input class="form-control form-control-lg" type="text" id="txtName" placeholder="Your Name/Khayal" />
             <button class="btn btn-success mb-3" type="button" id="btnEnter">Enter</button>
         </div>
     </div>
 </div>
 
+<style>
+    .sent-message {
+        text-align: right;
+        background-color: #d1e7fd; /* Light blue */
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px 0;
+        max-width: 70%;
+        align-self: flex-end;
+    }
+
+    .received-message {
+        text-align: left;
+        background-color: #f1f1f1; /* Light gray */
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px 0;
+        max-width: 70%;
+        align-self: flex-start;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>

@@ -13,4 +13,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\ChatFlow.Infrastructure\ChatFlow.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ChatFlow.Persistence\ChatFlow.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>

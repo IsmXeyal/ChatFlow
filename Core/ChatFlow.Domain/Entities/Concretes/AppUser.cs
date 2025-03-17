@@ -4,8 +4,8 @@ namespace ChatFlow.Domain.Entities.Concretes;
 
 public class AppUser : BaseEntity
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
     public string UserName { get; set; }
     public string Email { get; set; }
     public byte[] PasswordHash { get; set; }
@@ -14,11 +14,14 @@ public class AppUser : BaseEntity
     public byte[] PasswordSalt { get; set; }
     public string Role { get; set; }
     public bool EmailConfirm { get; set; } = false;
+    public string? ConnectionId { get; set; }
 
     // Navigation Property
-    public virtual ICollection<Token> Tokens { get; set; }
-    public virtual ICollection<UserAgent> UserAgents { get; set; }
-    public virtual EmailConfirmToken EmailConfirmToken { get; set; }
-    public virtual RePasswordToken RePasswordToken { get; set; }
-
+    public Token Token { get; set; }
+    public ICollection<UserAgent> UserAgents { get; set; }
+    public EmailConfirmToken EmailConfirmToken { get; set; }
+    public RefreshToken RefreshToken { get; set; }
+    public RePasswordToken RePasswordToken { get; set; }
+    public ICollection<Group> Groups { get; set; }
+    public ICollection<Message> Messages { get; set; }
 }

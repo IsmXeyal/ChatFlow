@@ -1,11 +1,13 @@
 ﻿using ChatFlow.Domain.Entities.Commons;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatFlow.Domain.Entities.Concretes;
 
 public class Token : BaseToken
 {
+    [ForeignKey("AppUser")]
     public int UserId { get; set; }
 
     // Navigation Property
-    public virtual AppUser AppUser { get; set; }
+    public AppUser AppUser { get; set; }
 }

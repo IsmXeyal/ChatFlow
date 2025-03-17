@@ -15,10 +15,12 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public virtual DbSet<AppUser> AppUsers { get; set; }
-    public virtual DbSet<EmailConfirmToken> EmailConfirmTokens { get; set; }
-    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
-    public virtual DbSet<RePasswordToken> RePasswordTokens { get; set; }
-    public virtual DbSet<Token> Tokens { get; set; }
-    public virtual DbSet<UserAgent> UserAgents { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<EmailConfirmToken> EmailConfirmTokens { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<RePasswordToken> RePasswordTokens { get; set; }
+    public DbSet<Token> Tokens { get; set; }
+    public DbSet<UserAgent> UserAgents { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Message> Messages { get; set; }
 }

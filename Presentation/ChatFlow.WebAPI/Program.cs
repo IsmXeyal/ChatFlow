@@ -1,7 +1,10 @@
 using ChatFlow.Persistence;
-using ChatFlow.Application;
 using ChatFlow.Infrastructure;
 using Microsoft.OpenApi.Models;
+using ChatFlow.Application.Services;
+using ChatFlow.Domain.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using ChatFlow.Infrastructure.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +52,9 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,5 +70,61 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Register endpoint
+app.MapPost("/api/auth/register", async (IAuthService authService, AppUserDTO appUserDTO) =>
+{
+    if (appUserDTO == null)
+        return Results.BadRequest("User data is required.");
+
+    var result = await authService.AddUserAsync(appUserDTO);
+    return Results.Ok(result);
+});
+
+// Login endpoint
+app.MapPost("/api/auth/login", async (IAuthService authService, LoginDTO loginDTO) =>
+{
+    var result = await authService.LoginAsync(loginDTO);
+    return Results.Ok(result);
+});
+
+// Email confirmation endpoint
+app.MapGet("/api/auth/emailconfirm", async (IAuthService authService, string token) =>
+{
+    var result = await authService.EmailConfirmAsync(token);
+    return Results.Ok(result);
+});
+
+// Forgetpassword endpoint
+app.MapPost("/api/auth/forgetpassword", async (IAuthService authService, ForgetPasswordDTO forgetPasswordDTO) =>
+{
+    var result = await authService.ForgetPasswordAsync(forgetPasswordDTO);
+    return Results.Ok(result);
+});
+
+// Resetpassword endpoint
+app.MapPost("/api/auth/resetpassword", async (IAuthService authService, string token, ResetPasswordDTO resetPasswordDTO) =>
+{
+    var result = await authService.ResetPasswordAsync(token, resetPasswordDTO);
+    return Results.Ok(result);
+});
+
+// Refreshtoken endpoint
+app.MapPost("/api/auth/refreshtoken", async (IAuthService authService, string refreshToken) =>
+{
+    var result = await authService.RefreshTokenAsync(refreshToken);
+    return Results.Ok(result);
+});
+
+// Getuserdata endpoint (only accessible by Admin role)
+app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAuthService authService) =>
+{
+    var user = authService.GetUserDatas();
+
+    if (user == null)
+        return Results.Problem("Invalid user data", statusCode: StatusCodes.Status401Unauthorized);
+
+    return Results.Ok(user);
+});
 
 app.Run();

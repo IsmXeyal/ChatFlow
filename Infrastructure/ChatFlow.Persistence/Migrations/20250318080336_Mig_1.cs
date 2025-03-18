@@ -18,15 +18,15 @@ namespace ChatFlow.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false),
                     EmailConfirm = table.Column<bool>(type: "boolean", nullable: false),
-                    ConnectionId = table.Column<string>(type: "text", nullable: false)
+                    ConnectionId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

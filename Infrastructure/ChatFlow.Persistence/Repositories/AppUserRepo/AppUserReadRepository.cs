@@ -12,9 +12,13 @@ public class AppUserReadRepository : GenericReadRepository<Domain.Entities.Concr
     {
     }
 
-    public async Task<Domain.Entities.Concretes.AppUser?> GetUserByEmail(string email)
+    public async Task<Domain.Entities.Concretes.AppUser?> GetUserByEmailWithRelationsAsync(string email)
     {
-        return await _entity.FirstOrDefaultAsync(p => p.Email == email);
+        return await _context.AppUsers
+            .Include(u => u.RefreshToken)
+            .Include(u => u.EmailConfirmToken)
+            .Include(u => u.RePasswordToken)
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<Domain.Entities.Concretes.AppUser?> GetUserByRefreshToken(string refreshToken)
@@ -41,5 +45,14 @@ public class AppUserReadRepository : GenericReadRepository<Domain.Entities.Concr
     public async Task<Domain.Entities.Concretes.AppUser?> GetUserByUserName(string userName)
     {
         return await _entity.FirstOrDefaultAsync(p => p.UserName == userName);
+    }
+
+    public async Task<Domain.Entities.Concretes.AppUser?> GetUserByUserNameWithRelationsAsync(string userName)
+    {
+        return await _context.AppUsers
+            .Include(u => u.RefreshToken) 
+            .Include(u => u.EmailConfirmToken) 
+            .Include(u => u.RePasswordToken) 
+            .FirstOrDefaultAsync(u => u.UserName == userName);
     }
 }

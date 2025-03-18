@@ -23,7 +23,7 @@ public class TokenService : ITokenService
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]!));
         var tokenDescription = new SecurityTokenDescriptor()
         {
-            Expires = DateTime.UtcNow.AddMinutes(1),
+            Expires = DateTime.UtcNow.AddMinutes(5),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256),
@@ -46,7 +46,7 @@ public class TokenService : ITokenService
         var emailConfirmToken = new RefreshToken()
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-            ExpireTime = DateTime.UtcNow.AddMinutes(30),
+            ExpireTime = DateTime.UtcNow.AddMinutes(10),
             CreateTime = DateTime.UtcNow
         };
         return emailConfirmToken;
@@ -57,7 +57,7 @@ public class TokenService : ITokenService
         var refreshToken = new RefreshToken()
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-            ExpireTime = DateTime.UtcNow.AddMinutes(30),
+            ExpireTime = DateTime.UtcNow.AddMinutes(10),
             CreateTime = DateTime.UtcNow
         };
         return refreshToken;
@@ -68,7 +68,7 @@ public class TokenService : ITokenService
         var repasswordToken = new RefreshToken()
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-            ExpireTime = DateTime.UtcNow.AddMinutes(30),
+            ExpireTime = DateTime.UtcNow.AddMinutes(10),
             CreateTime = DateTime.UtcNow
         };
         return repasswordToken;

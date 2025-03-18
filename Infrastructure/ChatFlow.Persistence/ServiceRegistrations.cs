@@ -16,7 +16,7 @@ public static class ServiceRegistrations
         services.AddDbContext<AppDbContext>(options =>
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) // Use current directory for resolving paths
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             var configuration = builder.Build();

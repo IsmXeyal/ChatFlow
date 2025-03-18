@@ -18,7 +18,6 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-
     public AuthService(
         IAppUserReadRepository readAppUserRepository, ITokenService tokenService, IAppUserWriteRepository writeAppUserRepository,
         IHttpContextAccessor httpContextAccessor)
@@ -60,7 +59,6 @@ public class AuthService : IAuthService
         await _writeAppUserRepository.AddAsync(newUser);
         await _writeAppUserRepository.SaveChangesAsync();
 
-        // Only return the confirmation link here
         return new { success = true, emailConfirmLink = confirmationLink };
     }
 
@@ -85,11 +83,16 @@ public class AuthService : IAuthService
 
     public async Task<object> ForgetPasswordAsync(ForgetPasswordDTO forgetPasswordDTO)
     {
-        var user = await _readAppUserRepository.GetUserByEmail(forgetPasswordDTO.Email);
+        var user = await _readAppUserRepository.GetUserByEmailWithRelationsAsync(forgetPasswordDTO.Email);
         if (user is null)
             return new { success = false, message = "User not found" };
 
         var resetToken = _tokenService.CreateRepasswordToken();
+        var resetLink = $"https://localhost:5001/api/Auth/ResetPassword?token={resetToken.Token}";
+
+        if (user.RePasswordToken == null)
+            user.RePasswordToken = new RePasswordToken();
+
         user.RePasswordToken.Token = resetToken.Token;
         user.RePasswordToken.CreateTime = resetToken.CreateTime;
         user.RePasswordToken.ExpireTime = resetToken.ExpireTime;
@@ -97,13 +100,12 @@ public class AuthService : IAuthService
         await _writeAppUserRepository.UpdateAsync(user);
         await _writeAppUserRepository.SaveChangesAsync();
 
-        var resetLink = $"https://localhost:5001/api/Auth/ResetPassword?token={resetToken.Token}";
         return new { success = true, resetLink = resetLink };
     }
 
     public async Task<object> LoginAsync(LoginDTO loginDTO)
     {
-        var user = await _readAppUserRepository.GetUserByUserName(loginDTO.UserName);
+        var user = await _readAppUserRepository.GetUserByUserNameWithRelationsAsync(loginDTO.UserName);
         if (user is null)
             return new { success = false, message = "Invalid username" };
 
@@ -118,11 +120,10 @@ public class AuthService : IAuthService
 
         var accessToken = _tokenService.CreateAccessToken(user);
         var refreshToken = _tokenService.CreateRefreshToken();
-        SetRefreshToken(user, refreshToken);
+        await SetRefreshToken(user, refreshToken);
 
         return new { success = true, accessToken = accessToken };
     }
-
 
     public async Task<object> RefreshTokenAsync(string refreshToken)
     {
@@ -135,10 +136,11 @@ public class AuthService : IAuthService
 
         var accessToken = _tokenService.CreateAccessToken(user);
         var newRefreshToken = _tokenService.CreateRefreshToken();
-        SetRefreshToken(user, newRefreshToken);
+        await SetRefreshToken(user, newRefreshToken);
 
         return new { success = true, accessToken = accessToken };
     }
+
 
     public async Task<object> ResetPasswordAsync(string token, ResetPasswordDTO resetPasswordDTO)
     {
@@ -158,13 +160,29 @@ public class AuthService : IAuthService
         return new { success = true, message = "Password reset successful" };
     }
 
-    private void SetRefreshToken(AppUser user, RefreshToken refreshToken)
+    private async Task SetRefreshToken(AppUser user, RefreshToken refreshToken)
     {
+        if (user.RefreshToken == null)
+            user.RefreshToken = new RefreshToken();
+
+
+        // Refresh token-i cookie-de yadda saxlamaliyiqki, access tokenin vaxti qurtaranda
+        // ordan oxuyub istifade ede bilsin.
+
+        var cookieOptions = new CookieOptions()
+        {
+            HttpOnly = true,
+            Expires = refreshToken.ExpireTime
+        };
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+
         user.RefreshToken.Token = refreshToken.Token;
         user.RefreshToken.CreateTime = refreshToken.CreateTime;
         user.RefreshToken.ExpireTime = refreshToken.ExpireTime;
-        _writeAppUserRepository.UpdateAsync(user);
-        _writeAppUserRepository.SaveChangesAsync();
+
+        await _writeAppUserRepository.UpdateAsync(user);
+        await _writeAppUserRepository.SaveChangesAsync();
     }
 
     public AppUser? GetUserDatas()

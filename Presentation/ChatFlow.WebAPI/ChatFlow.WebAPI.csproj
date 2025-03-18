@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\Infrastructure\ChatFlow.Persistence\ChatFlow.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

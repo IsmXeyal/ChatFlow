@@ -19,7 +19,6 @@ public class AppDbContext : DbContext
     public DbSet<EmailConfirmToken> EmailConfirmTokens { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<RePasswordToken> RePasswordTokens { get; set; }
-    public DbSet<Token> Tokens { get; set; }
     public DbSet<UserAgent> UserAgents { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Message> Messages { get; set; }

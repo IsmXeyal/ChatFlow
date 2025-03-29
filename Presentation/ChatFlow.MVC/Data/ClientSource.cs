@@ -1,8 +1,9 @@
-﻿using ChatFlow.MVC.Models;
+﻿using ChatFlow.Domain.ViewModels;
+using ChatFlow.MVC.Models;
 
 namespace ChatFlow.MVC.Data;
 
 public class ClientSource
 {
-    public static List<Client> Clients { get; set; } = new();
+    public static List<AppUserVM> Clients { get; set; } = new();
 }

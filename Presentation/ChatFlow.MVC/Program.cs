@@ -1,9 +1,11 @@
 using ChatFlow.MVC.Hubs;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
@@ -14,6 +16,21 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 }));
 
 builder.Services.AddSignalR();
+
+// Register HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
+// Configure Authentication (Cookie-based)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Login";
+        options.AccessDeniedPath = "/Home/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    });
+
+// Configure Authorization
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -26,7 +43,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCors();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -35,7 +52,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.MapHub<ChatHub>("/chatHub");
 app.MapControllers();

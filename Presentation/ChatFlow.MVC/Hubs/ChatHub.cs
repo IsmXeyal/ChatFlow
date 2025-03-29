@@ -1,4 +1,5 @@
-﻿using ChatFlow.MVC.Data;
+﻿using ChatFlow.Domain.ViewModels;
+using ChatFlow.MVC.Data;
 using ChatFlow.MVC.Models;
 using Microsoft.AspNetCore.SignalR;
 
@@ -8,10 +9,10 @@ public class ChatHub : Hub
 {
     public async Task GetClientName(string clientName)
     {
-        Client client = new()
+        AppUserVM client = new()
         {
             ConnectionId = Context.ConnectionId,
-            ClientName = clientName
+            UserName = clientName
         };
 
         ClientSource.Clients.Add(client);
@@ -22,16 +23,16 @@ public class ChatHub : Hub
     public async Task SendMessageAsync(string message, string clientName)
     {
         clientName = clientName.Trim();
-        Client clientSender = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
+        AppUserVM clientSender = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
 
         if (clientName == "All")
         {
-            await Clients.Others.SendAsync("ReceiveMessage", message, clientSender.ClientName);
+            await Clients.Others.SendAsync("ReceiveMessage", message, clientSender.UserName);
         }
         else
         {
-            Client client = ClientSource.Clients.FirstOrDefault(c => c.ClientName == clientName)!;
-            await Clients.Client(client.ConnectionId).SendAsync("ReceiveMessage", message, clientSender.ClientName);
+            AppUserVM client = ClientSource.Clients.FirstOrDefault(c => c.UserName == clientName)!;
+            await Clients.Client(client.ConnectionId).SendAsync("ReceiveMessage", message, clientSender.UserName);
         }
     }
 
@@ -47,7 +48,7 @@ public class ChatHub : Hub
 
     public async Task AddClientToGroup(IEnumerable<string> groupNames)
     {
-        Client client = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
+        AppUserVM client = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
 
         foreach (var group in groupNames)
         {
@@ -76,7 +77,7 @@ public class ChatHub : Hub
 
     public async Task SendMessageToGroupAsync(string message, string groupName)
     {
-        Client clientSender = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
-        await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message, clientSender.ClientName, groupName);
+        AppUserVM clientSender = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
+        await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message, clientSender.UserName, groupName);
     }
 }

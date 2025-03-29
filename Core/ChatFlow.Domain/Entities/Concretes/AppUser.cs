@@ -17,7 +17,6 @@ public class AppUser : BaseEntity
     public string? ConnectionId { get; set; }
 
     // Navigation Property
-    public Token Token { get; set; }
     public ICollection<UserAgent> UserAgents { get; set; }
     public EmailConfirmToken EmailConfirmToken { get; set; }
     public RefreshToken RefreshToken { get; set; }

@@ -1,8 +1,10 @@
-﻿namespace ChatFlow.MVC.Models;
+﻿using ChatFlow.Domain.ViewModels;
+
+namespace ChatFlow.MVC.Models;
 
 public class Group
 {
     public string GroupName { get; set; }
 
-    public List<Client> Clients { get; set; } = new();
+    public List<AppUserVM> Clients { get; set; } = new();
 }

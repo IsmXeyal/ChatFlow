@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatFlow.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250318080336_Mig_1")]
+    [Migration("20250329214823_Mig_1")]
     partial class Mig_1
     {
         /// <inheritdoc />
@@ -219,35 +219,6 @@ namespace ChatFlow.Persistence.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("ChatFlow.Domain.Entities.Concretes.Token", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ExpireTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Tokens");
-                });
-
             modelBuilder.Entity("ChatFlow.Domain.Entities.Concretes.UserAgent", b =>
                 {
                     b.Property<int>("Id")
@@ -341,17 +312,6 @@ namespace ChatFlow.Persistence.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("ChatFlow.Domain.Entities.Concretes.Token", b =>
-                {
-                    b.HasOne("ChatFlow.Domain.Entities.Concretes.AppUser", "AppUser")
-                        .WithOne("Token")
-                        .HasForeignKey("ChatFlow.Domain.Entities.Concretes.Token", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("ChatFlow.Domain.Entities.Concretes.UserAgent", b =>
                 {
                     b.HasOne("ChatFlow.Domain.Entities.Concretes.AppUser", "User")
@@ -374,9 +334,6 @@ namespace ChatFlow.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("RefreshToken")
-                        .IsRequired();
-
-                    b.Navigation("Token")
                         .IsRequired();
 
                     b.Navigation("UserAgents");

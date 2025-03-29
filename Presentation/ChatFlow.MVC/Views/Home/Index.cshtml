@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ChatFlow.Domain.ViewModels.AppUserVM
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -42,7 +44,7 @@
 
         <div class="col-md-3">
             <!-- User Name -->
-            <input class="form-control form-control-lg" type="text" id="txtName" placeholder="Your Name/Khayal" />
+            <input class="form-control form-control-lg" type="text" id="txtName" value="@Model.UserName" />
             <button class="btn btn-success mb-3" type="button" id="btnEnter">Enter</button>
         </div>
     </div>

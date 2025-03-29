@@ -3,7 +3,9 @@ using ChatFlow.Application.Repositories.Writes;
 using ChatFlow.Application.Services;
 using ChatFlow.Domain.DTOs;
 using ChatFlow.Domain.Entities.Concretes;
+using ChatFlow.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -122,6 +124,16 @@ public class AuthService : IAuthService
         var refreshToken = _tokenService.CreateRefreshToken();
         await SetRefreshToken(user, refreshToken);
 
+        _httpContextAccessor.HttpContext?.Session.SetString("accessToken", accessToken);
+
+        var userVm = new AppUserVM
+        {
+            UserName = user.UserName,
+            ConnectionId = user.ConnectionId
+        };
+
+        _httpContextAccessor.HttpContext?.Session.SetString("userVm", JsonConvert.SerializeObject(userVm));
+
         return new { success = true, accessToken = accessToken };
     }
 
@@ -187,15 +199,18 @@ public class AuthService : IAuthService
 
     public AppUser? GetUserDatas()
     {
-        var identity = _httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
-        if (identity == null || !identity.Claims.Any())
+        var accessToken = _httpContextAccessor.HttpContext?.Session.GetString("accessToken");
+        var userVmJson = _httpContextAccessor.HttpContext?.Session.GetString("userVm");
+
+        if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(userVmJson))
             return null;
+
+        var userVm = JsonConvert.DeserializeObject<AppUserVM>(userVmJson);
 
         return new AppUser()
         {
-            UserName = identity.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value!,
-            Email = identity.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)?.Value!,
-            Role = identity.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Role)?.Value!
+            UserName = userVm!.UserName,
+            ConnectionId = userVm.ConnectionId
         };
     }
 }

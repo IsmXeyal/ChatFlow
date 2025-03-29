@@ -5,13 +5,26 @@ using ChatFlow.Application.Services;
 using ChatFlow.Domain.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using ChatFlow.Infrastructure.Services;
+using ChatFlow.Domain.ViewModels;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddHttpClient();
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.AddInfrastructureRegister();
 builder.Services.AddPersistenceRegister();
@@ -55,6 +68,9 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add Authorization
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,10 +80,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllers();
 
@@ -124,7 +142,13 @@ app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAuthService 
     if (user == null)
         return Results.Problem("Invalid user data", statusCode: StatusCodes.Status401Unauthorized);
 
-    return Results.Ok(user);
+    var userVm = new AppUserVM
+    {
+        UserName = user.UserName,
+        ConnectionId = user.ConnectionId
+    };
+
+    return Results.Ok(userVm);
 });
 
 app.Run();

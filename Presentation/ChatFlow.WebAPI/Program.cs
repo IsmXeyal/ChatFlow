@@ -151,4 +151,14 @@ app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAuthService 
     return Results.Ok(userVm);
 });
 
+// Edit user data endpoint
+app.MapPut("/api/auth/edituserdata", async (IAuthService authService, int userId, EditUserDTO editUserDTO) =>
+{
+    var result = await authService.EditUserAsync(userId, editUserDTO);
+    if (!result)
+        return Results.Problem("Failed to update user data", statusCode: StatusCodes.Status400BadRequest);
+
+    return Results.Ok("User data updated successfully.");
+});
+
 app.Run();

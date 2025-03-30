@@ -12,4 +12,5 @@ public interface IAuthService
     Task<object> ForgetPasswordAsync(ForgetPasswordDTO forgetPasswordDTO);
     Task<object> ResetPasswordAsync(string token, ResetPasswordDTO resetPasswordDTO);
     AppUser? GetUserDatas();
+    Task<bool> EditUserAsync(int userId, EditUserDTO editUserDTO);
 }

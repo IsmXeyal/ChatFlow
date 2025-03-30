@@ -55,4 +55,9 @@ public class AppUserReadRepository : GenericReadRepository<Domain.Entities.Concr
             .Include(u => u.RePasswordToken) 
             .FirstOrDefaultAsync(u => u.UserName == userName);
     }
+
+    public async Task<Domain.Entities.Concretes.AppUser?> GetUserByIdAsync(int userId)
+    {
+        return await _entity.FirstOrDefaultAsync(p => p.Id == userId);
+    }
 }

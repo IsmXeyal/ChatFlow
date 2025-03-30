@@ -5,6 +5,7 @@ using ChatFlow.Domain.DTOs;
 using ChatFlow.Domain.Entities.Concretes;
 using ChatFlow.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -153,7 +154,6 @@ public class AuthService : IAuthService
         return new { success = true, accessToken = accessToken };
     }
 
-
     public async Task<object> ResetPasswordAsync(string token, ResetPasswordDTO resetPasswordDTO)
     {
         var user = await _readAppUserRepository.GetUserByRePasswordToken(token);
@@ -212,5 +212,25 @@ public class AuthService : IAuthService
             UserName = userVm!.UserName,
             ConnectionId = userVm.ConnectionId
         };
+    }
+
+    public async Task<bool> EditUserAsync(int userId, EditUserDTO editUserDTO)
+    {
+        var user = await _readAppUserRepository.GetUserByIdAsync(userId);
+        if (user == null)
+            return false;
+
+        if (!string.IsNullOrEmpty(editUserDTO.FirstName))
+            user.FirstName = editUserDTO.FirstName;
+
+        if (!string.IsNullOrEmpty(editUserDTO.LastName))
+            user.LastName = editUserDTO.LastName;
+
+        if (!string.IsNullOrEmpty(editUserDTO.UserName))
+            user.UserName = editUserDTO.UserName;
+
+        await _writeAppUserRepository.UpdateAsync(user);
+        await _writeAppUserRepository.SaveChangesAsync();
+        return true;
     }
 }

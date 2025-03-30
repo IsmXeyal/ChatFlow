@@ -26,9 +26,7 @@ public class ChatHub : Hub
         AppUserVM clientSender = ClientSource.Clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
 
         if (clientName == "All")
-        {
             await Clients.Others.SendAsync("ReceiveMessage", message, clientSender.UserName);
-        }
         else
         {
             AppUserVM client = ClientSource.Clients.FirstOrDefault(c => c.UserName == clientName)!;

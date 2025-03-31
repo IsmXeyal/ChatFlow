@@ -1,4 +1,12 @@
+using ChatFlow.Application.Repositories.Reads;
+using ChatFlow.Application.Repositories.Writes;
+using ChatFlow.Application.Services;
+using ChatFlow.Infrastructure;
+using ChatFlow.Infrastructure.Services;
 using ChatFlow.MVC.Hubs;
+using ChatFlow.Persistence;
+using ChatFlow.Persistence.Repositories.AppUser;
+using ChatFlow.Persistence.Repositories.AppUserRepo;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +27,10 @@ builder.Services.AddSignalR();
 
 // Register HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
+
+
+builder.AddInfrastructureRegister();
+builder.Services.AddPersistenceRegister();
 
 // Configure Authentication (Cookie-based)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

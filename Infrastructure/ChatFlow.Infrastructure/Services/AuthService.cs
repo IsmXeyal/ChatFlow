@@ -48,7 +48,7 @@ public class AuthService : IAuthService
         };
 
         var emailToken = _tokenService.CreateEmailConfirmToken();
-        var confirmationLink = $"https://localhost:5001/api/Auth/EmailConfirm?token={emailToken.Token}";
+        var confirmationLink = $"http://localhost:5001/api/Auth/EmailConfirm?token={emailToken.Token}";
 
         // Ensure the EmailConfirmToken is correctly associated with the user
         if (newUser.EmailConfirmToken == null)
@@ -91,7 +91,7 @@ public class AuthService : IAuthService
             return new { success = false, message = "User not found" };
 
         var resetToken = _tokenService.CreateRepasswordToken();
-        var resetLink = $"https://localhost:5001/api/Auth/ResetPassword?token={resetToken.Token}";
+        var resetLink = $"http://localhost:5001/api/Auth/ResetPassword?token={resetToken.Token}";
 
         if (user.RePasswordToken == null)
             user.RePasswordToken = new RePasswordToken();
@@ -195,42 +195,5 @@ public class AuthService : IAuthService
 
         await _writeAppUserRepository.UpdateAsync(user);
         await _writeAppUserRepository.SaveChangesAsync();
-    }
-
-    public AppUser? GetUserDatas()
-    {
-        var accessToken = _httpContextAccessor.HttpContext?.Session.GetString("accessToken");
-        var userVmJson = _httpContextAccessor.HttpContext?.Session.GetString("userVm");
-
-        if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(userVmJson))
-            return null;
-
-        var userVm = JsonConvert.DeserializeObject<AppUserVM>(userVmJson);
-
-        return new AppUser()
-        {
-            UserName = userVm!.UserName,
-            ConnectionId = userVm.ConnectionId
-        };
-    }
-
-    public async Task<bool> EditUserAsync(int userId, EditUserDTO editUserDTO)
-    {
-        var user = await _readAppUserRepository.GetUserByIdAsync(userId);
-        if (user == null)
-            return false;
-
-        if (!string.IsNullOrEmpty(editUserDTO.FirstName))
-            user.FirstName = editUserDTO.FirstName;
-
-        if (!string.IsNullOrEmpty(editUserDTO.LastName))
-            user.LastName = editUserDTO.LastName;
-
-        if (!string.IsNullOrEmpty(editUserDTO.UserName))
-            user.UserName = editUserDTO.UserName;
-
-        await _writeAppUserRepository.UpdateAsync(user);
-        await _writeAppUserRepository.SaveChangesAsync();
-        return true;
     }
 }

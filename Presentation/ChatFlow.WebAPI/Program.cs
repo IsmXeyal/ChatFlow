@@ -66,8 +66,6 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-
 // Add Authorization
 builder.Services.AddAuthorization();
 
@@ -135,9 +133,9 @@ app.MapPost("/api/auth/refreshtoken", async (IAuthService authService, string re
 });
 
 // Getuserdata endpoint (only accessible by Admin role)
-app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAuthService authService) =>
+app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAppUserService appUserService) =>
 {
-    var user = authService.GetUserDatas();
+    var user = appUserService.GetUserDatas();
 
     if (user == null)
         return Results.Problem("Invalid user data", statusCode: StatusCodes.Status401Unauthorized);
@@ -152,9 +150,9 @@ app.MapGet("/api/auth/getuserdatas", [Authorize(Roles = "Admin")] (IAuthService 
 });
 
 // Edit user data endpoint
-app.MapPut("/api/auth/edituserdata", async (IAuthService authService, int userId, EditUserDTO editUserDTO) =>
+app.MapPut("/api/auth/edituserdata", async (IAppUserService appUserService, int userId, EditUserDTO editUserDTO) =>
 {
-    var result = await authService.EditUserAsync(userId, editUserDTO);
+    var result = await appUserService.EditUserAsync(userId, editUserDTO);
     if (!result)
         return Results.Problem("Failed to update user data", statusCode: StatusCodes.Status400BadRequest);
 

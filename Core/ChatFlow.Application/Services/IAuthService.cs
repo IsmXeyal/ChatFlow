@@ -7,10 +7,8 @@ public interface IAuthService
 {
     Task<object> LoginAsync(LoginDTO loginDTO);
     Task<object> RefreshTokenAsync(string refreshToken);
-    Task<object> AddUserAsync(AppUserDTO appUserDTO);
     Task<object> EmailConfirmAsync(string token);
     Task<object> ForgetPasswordAsync(ForgetPasswordDTO forgetPasswordDTO);
     Task<object> ResetPasswordAsync(string token, ResetPasswordDTO resetPasswordDTO);
-    AppUser? GetUserDatas();
-    Task<bool> EditUserAsync(int userId, EditUserDTO editUserDTO);
+    Task<object> AddUserAsync(AppUserDTO appUserDTO);
 }

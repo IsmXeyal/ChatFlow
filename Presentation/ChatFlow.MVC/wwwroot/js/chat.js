@@ -20,6 +20,26 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#btnJoin").removeClass("disabled").prop("disabled", false);
         $(".rooms").removeClass("disabled").prop("disabled", false);
 
+        $("#btnEnter").prop("disabled", true);
+
+        event.preventDefault();
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", function (event) {
+        const clientName = $("#txtName").val();
+
+        connection.invoke("DisconnectUser", clientName)
+            .catch(function (err) {
+                console.error('Error notifying server about logout:', err);
+            })
+            .finally(function () {
+                connection.stop().then(function () {
+                    window.location.href = "/Home/Login";  // Redirect to login page
+                }).catch(function (err) {
+                    console.error('Error stopping SignalR connection:', err);
+                });
+            });
+
         event.preventDefault();
     });
 
@@ -32,22 +52,39 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    connection.on("UserDisconnected", function (clientName) {
+        $("#clientSituation").removeClass("alert-success")
+            .addClass("alert-danger")
+            .html(`${clientName} is disconnected...`);
+        $("#clientSituation").fadeIn(1000, () => {
+            setTimeout(() => {
+                $("#clientSituation").fadeOut(1000);
+            }, 3000);
+        });
+
+        // Remove the disconnected user from the client list UI
+        $('#_clients .users').each(function () {
+            if ($(this).text() === clientName) {
+                $(this).remove();
+            }
+        });
+    });
+
     connection.on("GetClients", function (clients) {
         $("#_clients").html(""); // Clear list before updating
 
         $.each(clients, function (index, client) {
             // Check if user already exists
-            if ($("#_clients .users").filter((_, el) => $(el).text() === client.clientName).length === 0) {
+            if ($("#_clients .users").filter((_, el) => $(el).text() === client.userName).length === 0) {
                 const user = $(".users").first().clone();
                 user.removeClass("active");
-                user.html(client.clientName);
+                user.html(client.userName);
                 user.addClass("users");
 
                 user.on("click", function () {
                     $(".users").removeClass("active");
                     $(this).addClass("active");
                 });
-
                 $("#_clients").append(user);
             }
         });

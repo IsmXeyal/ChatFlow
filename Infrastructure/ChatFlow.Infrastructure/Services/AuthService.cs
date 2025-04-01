@@ -5,6 +5,7 @@ using ChatFlow.Domain.DTOs;
 using ChatFlow.Domain.Entities.Concretes;
 using ChatFlow.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -45,7 +46,6 @@ public class AuthService : IAuthService
         };
 
         var emailToken = _tokenService.CreateEmailConfirmToken();
-        var confirmationLink = $"http://localhost:5001/api/Auth/EmailConfirm?token={emailToken.Token}";
 
         // Ensure the EmailConfirmToken is correctly associated with the user
         if (newUser.EmailConfirmToken == null)
@@ -59,7 +59,7 @@ public class AuthService : IAuthService
         await _writeAppUserRepository.AddAsync(newUser);
         await _writeAppUserRepository.SaveChangesAsync();
 
-        return new { success = true, emailConfirmLink = confirmationLink };
+        return new { success = true, emailToken = emailToken.Token };
     }
 
     public async Task<object> EmailConfirmAsync(string token)
@@ -88,7 +88,6 @@ public class AuthService : IAuthService
             return new { success = false, message = "User not found" };
 
         var resetToken = _tokenService.CreateRepasswordToken();
-        var resetLink = $"http://localhost:5001/api/Auth/ResetPassword?token={resetToken.Token}";
 
         if (user.RePasswordToken == null)
             user.RePasswordToken = new RePasswordToken();
@@ -100,7 +99,7 @@ public class AuthService : IAuthService
         await _writeAppUserRepository.UpdateAsync(user);
         await _writeAppUserRepository.SaveChangesAsync();
 
-        return new { success = true, resetLink = resetLink };
+        return new { success = true, resetToken = resetToken.Token };
     }
 
     public async Task<object> LoginAsync(LoginDTO loginDTO)

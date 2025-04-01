@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using ChatFlow.Domain.DTOs;
 using System.Net.Http.Headers;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 namespace ChatFlow.MVC.Controllers;
 
@@ -15,13 +14,18 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly HttpClient _httpClient;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IConfiguration _configuration;
 
-    public HomeController(ILogger<HomeController> logger, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+    public HomeController(ILogger<HomeController> logger, HttpClient httpClient, IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration)
     {
         _logger = logger;
         _httpClient = httpClient;
         _httpContextAccessor = httpContextAccessor;
-        _httpClient.BaseAddress = new Uri("http://localhost:5275/api/");
+        _configuration = configuration;
+
+        var baseApiUrl = _configuration.GetValue<string>("ApiBaseUrl");
+        _httpClient.BaseAddress = new Uri($"{baseApiUrl}/api/");
     }
 
     [HttpGet]

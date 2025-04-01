@@ -60,4 +60,12 @@ public class AppUserReadRepository : GenericReadRepository<Domain.Entities.Concr
     {
         return await _entity.FirstOrDefaultAsync(p => p.Id == userId);
     }
+
+    public async Task<Domain.Entities.Concretes.AppUser?> GetUserByConnectionIdWithRelationsAsync(string connectionId)
+    {
+        return await _context.AppUsers
+            .Include(u => u.Groups)
+            .Include(u => u.Messages)
+            .FirstOrDefaultAsync(u => u.ConnectionId == connectionId);
+    }
 }

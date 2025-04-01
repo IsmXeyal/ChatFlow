@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatFlow.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250329214823_Mig_1")]
-    partial class Mig_1
+    [Migration("20250401073704_Mig__1")]
+    partial class Mig__1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

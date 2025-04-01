@@ -74,12 +74,12 @@ public class AppUserService : IAppUserService
         return true;
     }
 
-    public async Task<List<AppUserVM>> GetAllClientsAsync()
+    public async Task<List<AppUser>> GetAllClientsAsync()
     {
         var users = await _readAppUserRepository.GetAllAsync();
         var validClients = users.Where(user => !string.IsNullOrEmpty(user.ConnectionId)).ToList();
 
-        return validClients.Select(user => new AppUserVM
+        return validClients.Select(user => new AppUser
         {
             UserName = user.UserName,
             ConnectionId = user.ConnectionId

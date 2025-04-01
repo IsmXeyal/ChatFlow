@@ -5,10 +5,7 @@ using ChatFlow.Domain.DTOs;
 using ChatFlow.Domain.Entities.Concretes;
 using ChatFlow.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 

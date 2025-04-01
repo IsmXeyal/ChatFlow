@@ -71,20 +71,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     connection.on("GetClients", function (clients) {
-        $("#_clients").html(""); // Clear list before updating
+        $("#_clients").html("");
+
+        $(".users").first().off("click").on("click", function () {
+            $(".users").removeClass("active");
+            $(this).addClass("active"); // Select only "All"
+        });
 
         $.each(clients, function (index, client) {
-            // Check if user already exists
             if ($("#_clients .users").filter((_, el) => $(el).text() === client.userName).length === 0) {
-                const user = $(".users").first().clone();
-                user.removeClass("active");
-                user.html(client.userName);
-                user.addClass("users");
+                const user = $("<a>")
+                    .addClass("list-group-item list-group-item-action users")
+                    .text(client.userName)
+                    .on("click", function () {
+                        $(".users").first().removeClass("active"); // Deselect "All" when selecting an individual
+                        $(this).toggleClass("active");
+                    });
 
-                user.on("click", function () {
-                    $(".users").removeClass("active");
-                    $(this).addClass("active");
-                });
                 $("#_clients").append(user);
             }
         });
@@ -140,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     let _groupName = "";
-    document.getElementById("btnSendToGroup").addEventListener("click", function (event) {
+    document.getElementById("btnSendToGroup").addEventListener("click", async function (event) {
         const message = $("#txtMessage").val();
         const currentUserName = $("#txtName").val();
 
@@ -165,10 +168,11 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
     });
 
-    connection.on("ReceiveGroupMessage", (message, clientName, groupName) => {
-        const currentUserName = $("#txtName").val();
+    connection.on("ReceiveGroupMessageAsync", (message, senderName, groupName) => {
+        const currentUserName = $("#txtName").val().trim();
 
-        if (clientName === currentUserName) return;
+        if (senderName === currentUserName)
+            return;
         // Get the current date and time
         const now = new Date();
         const sentDate = now.toLocaleString();
@@ -177,14 +181,13 @@ document.addEventListener("DOMContentLoaded", function () {
         _message.removeClass("message");
         _message.find("p").html(message);
         _message.find("h5")[0].innerHTML = groupName;
-        _message.find("h5")[1].innerHTML = clientName;
+        _message.find("h5")[1].innerHTML = senderName;
         _message.find("small").html(sentDate);
 
-        if (clientName === currentUserName) {
-            _message.addClass("sent-message");
-        } else {
+        if (senderName !== currentUserName) {
             _message.addClass("received-message");
         }
+
         $(".messages").append(_message);
     });
 

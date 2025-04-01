@@ -12,4 +12,5 @@ public interface IAppUserReadRepository : IGenericReadRepository<AppUser>
     Task<AppUser?> GetUserByEmailConfirmToken(string emailConfrmToken);
     Task<AppUser?> GetUserByUserNameWithRelationsAsync(string userName);
     Task<AppUser?> GetUserByIdAsync(int userId);
+    Task<AppUser?> GetUserByConnectionIdWithRelationsAsync(string connectionId);
 }

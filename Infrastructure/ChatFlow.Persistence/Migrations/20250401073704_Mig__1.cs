@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatFlow.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Mig_1 : Migration
+    public partial class Mig__1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -1,8 +1,8 @@
 ﻿using ChatFlow.Application.Repositories.Reads;
+using ChatFlow.Application.Repositories.Writes;
 using ChatFlow.Application.Services;
+using ChatFlow.Domain.Entities.Concretes;
 using ChatFlow.Domain.ViewModels;
-using ChatFlow.MVC.Data;
-using ChatFlow.MVC.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatFlow.MVC.Hubs;
@@ -10,14 +10,21 @@ namespace ChatFlow.MVC.Hubs;
 public class ChatHub : Hub
 {
     private readonly IAppUserService _appUserService;
+    private readonly IGroupService _groupService;
     private readonly IAppUserReadRepository _readAppUserRepository;
-    private List<AppUserVM> clients;
+    private readonly IGroupReadRepository _readGroupRepository;
+    private readonly IGroupWriteRepository _writeGroupRepository;
+    private List<AppUser> clients;
 
-    public ChatHub(IAppUserService appUserService, IAppUserReadRepository readAppUserRepository)
+    public ChatHub(IAppUserService appUserService, IAppUserReadRepository readAppUserRepository,
+        IGroupReadRepository readGroupRepository, IGroupService groupService, IGroupWriteRepository writeGroupRepository)
     {
         _appUserService = appUserService;
         _readAppUserRepository = readAppUserRepository;
-        clients = new List<AppUserVM>(); ;
+        _readGroupRepository = readGroupRepository;
+        _groupService = groupService;
+        _writeGroupRepository = writeGroupRepository;
+        clients = new List<AppUser>();
     }
 
     private async Task LoadClientsAsync()
@@ -63,59 +70,103 @@ public class ChatHub : Hub
     {
         await LoadClientsAsync();
         clientName = clientName.Trim();
-        AppUserVM clientSender = clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
+        AppUser clientSender = clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
 
         if (clientName == "All")
             await Clients.Others.SendAsync("ReceiveMessage", message, clientSender.UserName);
         else
         {
-            AppUserVM client = clients.FirstOrDefault(c => c.UserName == clientName)!;
+            AppUser client = clients.FirstOrDefault(c => c.UserName == clientName)!;
             await Clients.Client(client.ConnectionId).SendAsync("ReceiveMessage", message, clientSender.UserName);
         }
     }
 
     public async Task AddGroup(string groupName)
     {
+        await LoadClientsAsync();
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        Group group = new Group { GroupName = groupName};
-        group.Clients.Add(clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!);
 
-        GroupSource.Groups.Add(group);
-        await Clients.All.SendAsync("Groups", GroupSource.Groups);
+        var user = await _readAppUserRepository.GetUserByConnectionIdWithRelationsAsync(Context.ConnectionId);
+
+        var existingGroup = await _readGroupRepository.GetGroupByNameAsync(groupName);
+        if (existingGroup != null)
+        {
+            await Clients.Caller.SendAsync("ReceiveMessage", "Group name already exists.");
+            return;
+        }
+
+        Group group = new()
+        {
+            GroupName = groupName,
+            AppUsers = new List<AppUser> { user }
+        };
+
+        await _groupService.AddGroupAsync(group);
+
+        var allGroups = await _readGroupRepository.GetAllGroupsAsync(); 
+        var groupVMs = allGroups.Select(g => new GroupVM
+        {
+            GroupName = g.GroupName,
+            AppUsers = g.AppUsers.Select(u => new AppUserVM { UserName = u.UserName }).ToList()
+        }).ToList();
+
+        await Clients.All.SendAsync("Groups", groupVMs);
     }
 
-    public async Task AddClientToGroup(IEnumerable<string> groupNames)
+    public async Task AddClientToGroup(string[] groupNames)
     {
         await LoadClientsAsync();
-        AppUserVM client = clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
+        var user = await _readAppUserRepository.GetUserByConnectionIdWithRelationsAsync(Context.ConnectionId);
 
-        foreach (var group in groupNames)
+        foreach (var groupName in groupNames)
         {
-            Group _group = GroupSource.Groups.FirstOrDefault(g => g.GroupName == group)!;
+            var _group = await _readGroupRepository.GetGroupByNameAsync(groupName);
 
-            var result = _group.Clients.Any(g => g.ConnectionId == Context.ConnectionId);
-            if (_group != null && !result)
+            if (_group != null)
             {
-                _group.Clients.Add(client);
-                await Groups.AddToGroupAsync(Context.ConnectionId, group);
-                // After adding the client to the group, call GetClientInGroup to update the clients
-                await GetClientInGroup(group);
+                var result = _group.AppUsers.Any(g => g.ConnectionId == Context.ConnectionId);
+                if (!result)
+                {
+                    _group.AppUsers.Add(user);
+                    await _writeGroupRepository.UpdateAsync(_group);
+                    await _writeGroupRepository.SaveChangesAsync();
+
+                    await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+                    await GetClientInGroup(groupName);
+                }
             }
         }
     }
 
     public async Task GetClientInGroup(string groupName)
     {
-        Group group = GroupSource.Groups.FirstOrDefault(g => g.GroupName == groupName)!;
+        var group = await _readGroupRepository.GetGroupByNameAsync(groupName);
 
-        if (group != null)
-            await Clients.Caller.SendAsync("GetClients", group.Clients);
+        if (group == null)
+        {
+            await Clients.Caller.SendAsync("ReceiveMessage", $"{groupName} not found.");
+            return;
+        }
+
+        var clients = group.AppUsers.Select(u => new AppUserVM
+        {
+            UserName = u.UserName
+        }).ToList();
+
+        await Clients.Caller.SendAsync("GetClients", clients);
     }
 
     public async Task SendMessageToGroupAsync(string message, string groupName)
     {
-        await LoadClientsAsync();
-        AppUserVM clientSender = clients.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId)!;
-        await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message, clientSender.UserName, groupName);
+        var sender = await _readAppUserRepository.GetUserByConnectionIdWithRelationsAsync(Context.ConnectionId);
+        var group = await _readGroupRepository.GetGroupByNameAsync(groupName);
+
+        if (!group.AppUsers.Any(u => u.Id == sender.Id))
+        {
+            await Clients.Caller.SendAsync("ReceiveMessage", "You are not a member of this group.");
+            return;
+        }
+
+        await Clients.Group(groupName).SendAsync("ReceiveGroupMessageAsync", message, sender.UserName, groupName);
     }
 }

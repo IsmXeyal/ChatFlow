@@ -5,4 +5,6 @@ namespace ChatFlow.Application.Repositories.Reads;
 
 public interface IGroupReadRepository : IGenericReadRepository<Group>
 {
+    Task<Group?> GetGroupByNameAsync(string groupName);
+    Task<List<Group>> GetAllGroupsAsync();
 }

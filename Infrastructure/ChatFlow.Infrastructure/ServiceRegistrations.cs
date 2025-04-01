@@ -15,6 +15,7 @@ public static class ServiceRegistrations
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IAppUserService, AppUserService>();
+        builder.Services.AddScoped<IGroupService, GroupService>();
 
         // Add Auth JWT
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

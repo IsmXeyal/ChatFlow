@@ -20,6 +20,16 @@ public class GroupReadRepository : GenericReadRepository<Domain.Entities.Concret
 
     public async Task<List<Domain.Entities.Concretes.Group>> GetAllGroupsAsync()
     {
-        return await _context.Groups.Include(g => g.AppUsers).ToListAsync();
+        return await _context.Groups
+            .Include(g => g.AppUsers)
+            .ToListAsync();
+    }
+
+    public async Task<List<Domain.Entities.Concretes.Group>> GetGroupsByUserIdAsync(int userId)
+    {
+        return await _context.Groups
+            .Include(g => g.AppUsers)
+            .Where(g => g.AppUsers.Any(u => u.Id == userId))
+            .ToListAsync();
     }
 }

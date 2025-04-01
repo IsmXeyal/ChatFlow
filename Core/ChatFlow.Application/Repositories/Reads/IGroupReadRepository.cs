@@ -7,4 +7,5 @@ public interface IGroupReadRepository : IGenericReadRepository<Group>
 {
     Task<Group?> GetGroupByNameAsync(string groupName);
     Task<List<Group>> GetAllGroupsAsync();
+    Task<List<Group>> GetGroupsByUserIdAsync(int userId);
 }

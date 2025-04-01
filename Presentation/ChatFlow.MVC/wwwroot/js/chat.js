@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         $("#btnEnter").prop("disabled", true);
 
+        connection.invoke("GetGroups")
+            .catch(err => console.error(err.toString()));
+
         event.preventDefault();
     });
 
@@ -68,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 $(this).remove();
             }
         });
+
     });
 
     connection.on("GetClients", function (clients) {
@@ -109,6 +113,10 @@ document.addEventListener("DOMContentLoaded", function () {
             _message.addClass("received-message");
         }
         $(".messages").append(_message);
+    });
+
+    connection.on("ReceiveMessageAlert", (message) => {
+        alert(message);
     });
 
     document.getElementById("btnSend").addEventListener("click", function (event) {
@@ -169,6 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     connection.on("ReceiveGroupMessageAsync", (message, senderName, groupName) => {
+        console.log(message, senderName, groupName);
         const currentUserName = $("#txtName").val().trim();
 
         if (senderName === currentUserName)

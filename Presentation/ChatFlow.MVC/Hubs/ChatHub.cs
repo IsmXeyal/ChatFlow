@@ -58,8 +58,21 @@ public class ChatHub : Hub
             var user = await _readAppUserRepository.GetUserByUserName(clientName);
             if (user != null)
             {
+                var groups = await _readGroupRepository.GetGroupsByUserIdAsync(user.Id);
+                foreach (var group in groups)
+                {
+                    group.AppUsers.Remove(user);
+                    await _writeGroupRepository.UpdateAsync(group);
+                    await _writeGroupRepository.SaveChangesAsync();
+                }
+
                 user.ConnectionId = null; 
                 await _appUserService.UpdateUserConnectionIdAsync(user.Id, null);
+            }
+            var userGroups = await _readGroupRepository.GetGroupsByUserIdAsync(disconnectedUser.Id);
+            foreach (var group in userGroups)
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, group.GroupName);
             }
 
             await Clients.All.SendAsync("GetClients", clients);
@@ -91,7 +104,7 @@ public class ChatHub : Hub
         var existingGroup = await _readGroupRepository.GetGroupByNameAsync(groupName);
         if (existingGroup != null)
         {
-            await Clients.Caller.SendAsync("ReceiveMessage", "Group name already exists.");
+            await Clients.Caller.SendAsync("ReceiveMessageAlert", "Group name already exists.");
             return;
         }
 
@@ -113,6 +126,19 @@ public class ChatHub : Hub
         await Clients.All.SendAsync("Groups", groupVMs);
     }
 
+    public async Task GetGroups()
+    {
+        var groups = await _readGroupRepository.GetAllGroupsAsync();
+        var groupVMs = groups.Select(g => new GroupVM
+        {
+            GroupName = g.GroupName,
+            AppUsers = g.AppUsers.Select(u => new AppUserVM { UserName = u.UserName }).ToList()
+        }).ToList();
+
+        await Clients.Caller.SendAsync("Groups", groupVMs);
+    }
+
+    // Logout olduqdan sonra mesaj getmir
     public async Task AddClientToGroup(string[] groupNames)
     {
         await LoadClientsAsync();
@@ -138,13 +164,64 @@ public class ChatHub : Hub
         }
     }
 
+    public override async Task OnConnectedAsync()
+    {
+        var user = await _readAppUserRepository.GetUserByConnectionIdWithRelationsAsync(Context.ConnectionId);
+        if (user != null)
+        {
+            await _appUserService.UpdateUserConnectionIdAsync(user.Id, Context.ConnectionId);
+            var groups = await _readGroupRepository.GetGroupsByUserIdAsync(user.Id);
+            foreach (var group in groups)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, group.GroupName);
+            }
+        }
+        await LoadClientsAsync();
+        await Clients.All.SendAsync("GetClients", clients);
+
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var user = await _readAppUserRepository.GetUserByConnectionIdWithRelationsAsync(Context.ConnectionId);
+        if (user != null)
+        {
+            await _appUserService.UpdateUserConnectionIdAsync(user.Id, null);
+            clients.RemoveAll(c => c.ConnectionId == Context.ConnectionId);
+
+            var userGroups = await _readGroupRepository.GetGroupsByUserIdAsync(user.Id);
+
+            foreach (var group in userGroups)
+            {
+                group.AppUsers.Remove(user);
+                await _writeGroupRepository.UpdateAsync(group);
+                await _writeGroupRepository.SaveChangesAsync();
+
+                if (!group.AppUsers.Any())
+                {
+                    await _writeGroupRepository.DeleteAsync(group);
+                    await _writeGroupRepository.SaveChangesAsync();
+                }
+                else
+                {
+                    await _writeGroupRepository.UpdateAsync(group);
+                    await _writeGroupRepository.SaveChangesAsync();
+                }
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, group.GroupName);
+            }
+        }
+        await Clients.All.SendAsync("GetClients", clients);
+        await base.OnDisconnectedAsync(exception);
+    }
+
     public async Task GetClientInGroup(string groupName)
     {
         var group = await _readGroupRepository.GetGroupByNameAsync(groupName);
 
         if (group == null)
         {
-            await Clients.Caller.SendAsync("ReceiveMessage", $"{groupName} not found.");
+            await Clients.Caller.SendAsync("ReceiveMessageAlert", $"{groupName} not found.");
             return;
         }
 
@@ -163,7 +240,7 @@ public class ChatHub : Hub
 
         if (!group.AppUsers.Any(u => u.Id == sender.Id))
         {
-            await Clients.Caller.SendAsync("ReceiveMessage", "You are not a member of this group.");
+            await Clients.Caller.SendAsync("ReceiveMessageAlert", "You are not a member of this group.");
             return;
         }
 

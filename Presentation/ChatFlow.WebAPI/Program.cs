@@ -4,8 +4,8 @@ using Microsoft.OpenApi.Models;
 using ChatFlow.Application.Services;
 using ChatFlow.Domain.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using ChatFlow.Infrastructure.Services;
 using ChatFlow.Domain.ViewModels;
+using ChatFlow.WebAPI.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +69,8 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+MigrationExtension.ApplyMigration(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

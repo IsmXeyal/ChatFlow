@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
     networks:
-      - chatflow-network
+      - chatflow
 
   db:
     image: postgres:latest
@@ -30,7 +30,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - chatflow-network
+      - chatflow
 
   mvc:
     volumes:
@@ -50,10 +50,10 @@ services:
       - webapi
       - db
     networks:
-      - chatflow-network
+      - chatflow
 
 networks:
-  chatflow-network:
+  chatflow:
    driver: bridge
 
 

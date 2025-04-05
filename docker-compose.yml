@@ -12,7 +12,6 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__ChatFlowDatabase=Host=db;Database=chatflowDB;Username=postgres;Password=khayal
     depends_on:
       - db
     networks:
@@ -45,7 +44,6 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__ChatFlowDatabase=Host=db;Database=chatflowDB;Username=postgres;Password=khayal
     depends_on:
       - webapi
       - db

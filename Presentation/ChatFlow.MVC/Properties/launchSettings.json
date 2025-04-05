@@ -28,7 +28,7 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "launchUrl": "http://localhost:5004",
       "environmentVariables": {
         "ASPNETCORE_URLS": "http://+:80"
       },
